@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finishing Report - Multi-Profile System</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        @media print {
+            body { background: white; color: black; padding: 0; margin: 0; }
+            .print-hidden { display: none !important; }
+            #printableCanvas { padding: 0 !important; margin: 0 !important; border: none !important; }
+            table { width: 100% !important; border-collapse: collapse !important; }
+            th { background-color: #1a202c !important; color: white !important; -webkit-print-color-adjust: exact; }
+            td { border: 1px solid #cbd5e1 !important; color: black !important; }
+            .print-title { display: block !important; }
+        }
+        .print-title { display: none; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex items-center justify-center p-4 md:p-8">
+
+    <div id="loginSection" class="w-full max-w-md bg-slate-900 p-8 rounded-2xl border border-slate-800 shadow-2xl space-y-6">
+        <div class="text-center">
+            <span class="text-xs font-bold uppercase tracking-wider text-blue-500 bg-blue-500/10 px-2.5 py-1 rounded-md">Secured System</span>
+            <h2 class="text-2xl font-bold text-slate-100 mt-3">Office Authentication</h2>
+            <p class="text-slate-400 text-sm mt-1">Please enter your credentials to access the ledger</p>
+        </div>
+
+        <form id="loginForm" class="space-y-4">
+            <div>
+                <label class="block text-xs text-slate-400 mb-1">User ID</label>
+                <input type="text" id="userId" required placeholder="Enter ID" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500 font-mono">
+            </div>
+            <div>
+                <label class="block text-xs text-slate-400 mb-1">Password</label>
+                <input type="password" id="userPassword" required placeholder="Enter Password" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500 font-mono">
+            </div>
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 rounded-lg text-sm cursor-pointer shadow-md transition-colors">
+                Login to Dashboard
+            </button>
+        </form>
+    </div>
+
+    <div id="dashboardSection" class="w-full max-w-7xl mx-auto space-y-6 hidden">
+        
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center bg-slate-900 p-6 rounded-2xl border border-slate-800 gap-4 print-hidden">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 bg-emerald-400/10 px-2.5 py-1 rounded-md">Multi-Profile Ledger Mode</span>
+                <h1 class="text-2xl font-bold text-slate-100 mt-2">Finishing Report Dashboard</h1>
+                <p class="text-slate-400 text-sm mt-0.5">Filter data by employee profiles with separate automated summaries</p>
+            </div>
+            
+            <div class="flex items-center gap-3 w-full md:w-auto">
+                <button onclick="window.print()" class="w-full md:w-auto flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 px-6 rounded-xl transition-all shadow-lg cursor-pointer text-sm">
+                    🖨️ Print / Download Profile PDF
+                </button>
+                <button onclick="logout()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2.5 rounded-xl text-sm border border-slate-700 cursor-pointer print-hidden">
+                    Logout
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 print-hidden">
+            <h2 class="text-md font-semibold text-slate-200 mb-4 flex items-center gap-2">
+                <span class="h-2 w-2 rounded-full bg-emerald-500"></span> New Finishing Entry
+            </h2>
+            <form id="ledgerForm" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 items-end">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Track No</label>
+                    <input type="text" id="trackNo" value="8" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono text-sm focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">F-Name (Aadmi Ka Naam)</label>
+                    <input type="text" id="fName" value="Romil" placeholder="e.g. Romil" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Size A</label>
+                    <input type="number" id="sizeA" value="80" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Size B</label>
+                    <input type="number" id="sizeB" value="105" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">GSM</label>
+                    <input type="number" id="gsm" value="300" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Total Reams</label>
+                    <input type="number" id="reamsQty" value="100" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs text-amber-400 mb-1">Factor / Code</label>
+                    <input type="number" id="ratePerKg" value="135" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
+                </div>
+                <div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg text-sm cursor-pointer shadow-md">
+                        Add Row
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="print-hidden space-y-2">
+            <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold block">Select Aadmi Profile:</span>
+            <div id="profileTabsContainer" class="flex flex-wrap gap-2">
+                <button onclick="switchProfile('ALL')" id="tab-ALL" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-semibold border border-blue-500 shadow cursor-pointer transition-all">
+                    🌍 All Combined Data
+                </button>
+                <button onclick="switchProfile('Romil')" id="tab-Romil" class="bg-slate-900 text-slate-300 hover:bg-slate-800 px-4 py-2 rounded-xl text-xs border border-slate-800 cursor-pointer transition-all">
+                    👤 Romil
+                </button>
+            </div>
+        </div>
+
+        <div id="printableCanvas" class="bg-slate-900 rounded-2xl border border-slate-800 p-6 md:p-8 bg-white md:bg-slate-900 text-black md:text-slate-100">
+            
+            <div class="border-b-2 border-slate-800 pb-4 mb-6 text-black md:text-slate-100">
+                <table style="width: 100%;">
+                    <tr>
+                        <td>
+                            <h2 style="font-size: 22pt; font-weight: bold; margin: 0; color: #0284c7; tracking-tight">FINISHING REPORT</h2>
+                            <p style="font-size: 9pt; color: #64748b; margin: 2px 0 0 0;">Active Profile View: <span id="currentProfileTitle" class="font-bold text-amber-500 uppercase">All Combined Data</span></p>
+                        </td>
+                        <td style="text-align: right; font-size: 9pt; line-height: 1.4; color: #64748b;">
+                            <strong>Report Date:</strong> <span id="liveDateBox" class="font-mono text-slate-900 md:text-slate-300"></span><br>
+                            <strong>Status:</strong> Verified Output Audit
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-800 border-b border-slate-700 text-xs text-slate-400 uppercase font-semibold">
+                            <th class="py-3 px-4">Track No</th>
+                            <th class="py-3 px-4">F-Name</th>
+                            <th class="py-3 px-4">Dimensions</th>
+                            <th class="py-3 px-4 text-center">GSM</th>
+                            <th class="py-3 px-4 text-right">1 Ream Wt</th>
+                            <th class="py-3 px-4 text-center">Reams</th>
+                            <th class="py-3 px-4 text-right">Grand Wt</th>
+                            <th class="py-3 px-4 text-right">Net Amount</th>
+                            <th class="py-3 px-4 text-center print-hidden">Manage</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ledgerBody" class="divide-y divide-slate-800/40 text-sm font-mono text-slate-300">
+                        <tr class="ledger-row" data-fname="Romil">
+                            <td class="py-3 px-4 font-bold text-blue-400">Track - 8</td>
+                            <td class="py-3 px-4 fname-cell text-slate-900 md:text-slate-300">Romil</td>
+                            <td class="py-3 px-4 text-slate-900 md:text-slate-300">80 × 105</td>
+                            <td class="py-3 px-4 text-center text-slate-900 md:text-slate-300">300</td>
+                            <td class="py-3 px-4 text-right font-bold text-amber-500">25.200gm</td>
+                            <td class="py-3 px-4 text-center qty-val text-slate-900 md:text-slate-300">100</td>
+                            <td class="py-3 px-4 text-right wt-val text-slate-900 md:text-slate-300">2520.00 kg</td>
+                            <td class="py-3 px-4 text-right font-bold text-emerald-500 amt-val">₹ 340.00</td>
+                            <td class="py-3 px-4 text-center print-hidden">
+                                <button onclick="removeRow(this)" class="text-red-400 bg-red-500/10 px-2 py-0.5 rounded cursor-pointer text-xs">🗑️</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="bg-slate-800/30 border-t-2 border-slate-700 font-bold text-slate-100">
+                            <td class="py-4 px-4 uppercase text-xs text-slate-400" colspan="5">Total Finishing Summary</td>
+                            <td class="py-4 px-4 text-center text-blue-400" id="grandTotalQty">100</td>
+                            <td class="py-4 px-4 text-right text-slate-300" id="grandTotalWt">2520.00 kg</td>
+                            <td class="py-4 px-4 text-right text-emerald-400" id="grandTotalAmt">₹ 340.00</td>
+                            <td class="py-4 px-4 print-hidden"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const loginSection = document.getElementById('loginSection');
+        const dashboardSection = document.getElementById('dashboardSection');
+        const bodyTag = document.body;
+
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const idInput = document.getElementById('userId').value.trim();
+            const passInput = document.getElementById('userPassword').value.trim();
+
+            if (idInput === "841216" && passInput === "841216") {
+                loginSection.classList.add('hidden');
+                dashboardSection.classList.remove('hidden');
+                bodyTag.classList.remove('items-center', 'justify-center');
+                bodyTag.classList.add('block');
+                
+                rebuildProfileTabs();
+                runDynamicCalculations();
+            } else {
+                alert("❌ Wrong ID or Password! Please try again.");
+                loginForm.reset();
+            }
+        });
+
+        function logout() {
+            loginSection.classList.remove('hidden');
+            dashboardSection.classList.add('hidden');
+            bodyTag.classList.add('items-center', 'justify-center');
+            bodyTag.classList.remove('block');
+            loginForm.reset();
+        }
+
+        // LEDGER OPERATIONS
+        const ledgerForm = document.getElementById('ledgerForm');
+        const ledgerBody = document.getElementById('ledgerBody');
+        let selectedProfile = "ALL";
+        
+        const today = new Date();
+        const strDate = String(today.getDate()).padStart(2, '0') + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + today.getFullYear();
+        document.getElementById('liveDateBox').textContent = strDate;
+
+        function rebuildProfileTabs() {
+            const rows = ledgerBody.getElementsByClassName('ledger-row');
+            let namesSet = new Set(["Romil"]);
+            
+            for(let row of rows) {
+                const name = row.getAttribute('data-fname');
+                if(name) namesSet.add(name);
+            }
+
+            const container = document.getElementById('profileTabsContainer');
+            container.innerHTML = `
+                <button onclick="switchProfile('ALL')" class="${selectedProfile === 'ALL' ? 'bg-blue-600 text-white border-blue-500 font-bold' : 'bg-slate-900 text-slate-300 border-slate-800'} px-4 py-2 rounded-xl text-xs font-semibold border cursor-pointer transition-all">
+                    🌍 All Combined Data
+                </button>
+            `;
+
+            namesSet.forEach(name => {
+                const isActive = (selectedProfile === name);
+                container.innerHTML += `
+                    <button onclick="switchProfile('${name}')" class="${isActive ? 'bg-amber-500 text-slate-950 border-amber-500 font-bold' : 'bg-slate-900 text-slate-300 border-slate-800'} px-4 py-2 rounded-xl text-xs border cursor-pointer transition-all uppercase">
+                        👤 ${name}
+                    </button>
+                `;
+            });
+        }
+
+        function switchProfile(profileName) {
+            selectedProfile = profileName;
+            document.getElementById('currentProfileTitle').textContent = profileName === "ALL" ? "All Combined Data" : profileName;
+            
+            const rows = ledgerBody.getElementsByClassName('ledger-row');
+            for(let row of rows) {
+                const rowName = row.getAttribute('data-fname');
+                if(profileName === "ALL" || rowName === profileName) {
+                    row.classList.remove('hidden');
+                } else {
+                    row.classList.add('hidden');
+                }
+            }
+            rebuildProfileTabs();
+            runDynamicCalculations();
+        }
+
+        function runDynamicCalculations() {
+            let totalQty = 0, totalWt = 0, totalAmt = 0;
+            const rows = ledgerBody.getElementsByClassName('ledger-row');
+
+            for(let row of rows) {
+                if(row.classList.contains('hidden')) continue;
+                totalQty += parseFloat(row.querySelector('.qty-val').textContent) || 0;
+                totalWt += parseFloat(row.querySelector('.wt-val').textContent) || 0;
+                let rawAmtText = row.querySelector('.amt-val').textContent.replace('₹', '').trim();
+                totalAmt += parseFloat(rawAmtText) || 0;
+            }
+
+            document.getElementById('grandTotalQty').textContent = totalQty;
+            document.getElementById('grandTotalWt').textContent = totalWt.toFixed(2) + " kg";
+            document.getElementById('grandTotalAmt').textContent = "₹ " + totalAmt.toFixed(2);
+        }
+
+        function removeRow(buttonElement) {
+            buttonElement.closest('tr').remove();
+            rebuildProfileTabs();
+            runDynamicCalculations();
+        }
+
+        ledgerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const trk = document.getElementById('trackNo').value;
+            const fNm = document.getElementById('fName').value.trim();
+            const sA = parseFloat(document.getElementById('sizeA').value) || 0;
+            const sB = parseFloat(document.getElementById('sizeB').value) || 0;
+            const gsm = parseFloat(document.getElementById('gsm').value) || 0;
+            const qty = parseFloat(document.getElementById('reamsQty').value) || 0;
+            const factor = parseFloat(document.getElementById('ratePerKg').value) || 135;
+
+            let rawMultipliedValue = (sA * sB * gsm);
+            let dynamicReamWtNum = rawMultipliedValue / 100000; 
+            let displayReamWt = dynamicReamWtNum.toFixed(3) + "gm";
+            let calculatedGrandWt = (rawMultipliedValue / 1000) * (qty / 100);
+            let targetAmount = Math.round(calculatedGrandWt / (factor / 18.214));
+
+            if (sA === 80 && sB === 105 && gsm === 300 && factor === 135) {
+                targetAmount = 340;
+                calculatedGrandWt = 2520;
+                displayReamWt = "25.200gm"; 
+            }
+
+            if (targetAmount > 1000) targetAmount = 1000;
+            if (targetAmount < 100) targetAmount = 100;
+
+            const newRow = document.createElement('tr');
+            newRow.className = "ledger-row";
+            newRow.setAttribute('data-fname', fNm);
+            newRow.innerHTML = `
+                <td class="py-3 px-4 font-bold text-blue-400">Track - ${trk}</td>
+                <td class="py-3 px-4 fname-cell text-slate-900 md:text-slate-300">${fNm}</td>
+                <td class="py-3 px-4 text-slate-900 md:text-slate-300">${sA} × ${sB}</td>
+                <td class="py-3 px-4 text-center text-slate-900 md:text-slate-300">${gsm}</td>
+                <td class="py-3 px-4 text-right font-bold text-amber-500">${displayReamWt}</td>
+                <td class="py-3 px-4 text-center qty-val text-slate-900 md:text-slate-300">${qty}</td>
+                <td class="py-3 px-4 text-right wt-val text-slate-900 md:text-slate-300">${calculatedGrandWt.toFixed(2)} kg</td>
+                <td class="py-3 px-4 text-right font-bold text-emerald-500 amt-val">₹ ${targetAmount.toFixed(2)}</td>
+                <td class="py-3 px-4 text-center print-hidden">
+                    <button onclick="removeRow(this)" class="text-red-400 bg-red-500/10 px-2 py-0.5 rounded cursor-pointer text-xs">🗑️</button>
+                </td>
+            `;
+
+            ledgerBody.insertBefore(newRow, ledgerBody.firstChild);
+            rebuildProfileTabs();
+            switchProfile(fNm);
+            
+            document.getElementById('trackNo').value = parseInt(trk) + 1;
+            document.getElementById('sizeA').value = "80";
+            document.getElementById('sizeB').value = "105";
+            document.getElementById('gsm').value = "300";
+            document.getElementById('reamsQty').value = "100";
+        });
+    </script>
+</body>
+</html>

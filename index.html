@@ -1,131 +1,118 @@
-<!DOCTYPE html>
+
+            <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finishing Report - Multi-Profile System</title>
+    <title>Finishing Report - Enterprise Ledger v2</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <style>
-        @media print {
-            body { background: white; color: black; padding: 0; margin: 0; }
-            .print-hidden { display: none !important; }
-            #printableCanvas { padding: 0 !important; margin: 0 !important; border: none !important; }
-            table { width: 100% !important; border-collapse: collapse !important; }
-            th { background-color: #1a202c !important; color: white !important; -webkit-print-color-adjust: exact; }
-            td { border: 1px solid #cbd5e1 !important; color: black !important; }
-            .print-title { display: block !important; }
-        }
-        .print-title { display: none; }
-    </style>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex items-center justify-center p-4 md:p-8">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen p-4 md:p-8">
 
-    <div id="loginSection" class="w-full max-w-md bg-slate-900 p-8 rounded-2xl border border-slate-800 shadow-2xl space-y-6">
+    <div id="loginSection" class="max-w-md mx-auto my-20 bg-slate-900 p-8 rounded-2xl border border-slate-800 shadow-2xl space-y-6">
         <div class="text-center">
-            <span class="text-xs font-bold uppercase tracking-wider text-blue-500 bg-blue-500/10 px-2.5 py-1 rounded-md">Secured System</span>
-            <h2 class="text-2xl font-bold text-slate-100 mt-3">Office Authentication</h2>
-            <p class="text-slate-400 text-sm mt-1">Please enter your credentials to access the ledger</p>
+            <span class="text-xs font-bold uppercase tracking-wider text-blue-500 bg-blue-500/10 px-2.5 py-1 rounded-md">Enterprise Security</span>
+            <h2 class="text-3xl font-extrabold text-slate-100 mt-3 tracking-tight">Authentication</h2>
+            <p class="text-slate-400 text-sm mt-1">Enter your assigned secret key to gain ledger access</p>
         </div>
 
-        <form id="loginForm" class="space-y-4">
+        <div class="space-y-4">
             <div>
-                <label class="block text-xs text-slate-400 mb-1">User ID</label>
-                <input type="text" id="userId" required placeholder="Enter ID" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500 font-mono">
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5 text-center">Secret Passcode Key</label>
+                <input type="password" id="secretCodeInput" placeholder="••••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white text-center text-xl focus:outline-none focus:border-blue-500 font-mono tracking-widest transition-all">
             </div>
-            <div>
-                <label class="block text-xs text-slate-400 mb-1">Password</label>
-                <input type="password" id="userPassword" required placeholder="Enter Password" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500 font-mono">
-            </div>
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 rounded-lg text-sm cursor-pointer shadow-md transition-colors">
-                Login to Dashboard
+            
+            <button onclick="authenticateSessionRoute()" type="button" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3.5 rounded-xl text-sm cursor-pointer shadow-lg shadow-indigo-600/10 transition-all text-center block uppercase tracking-widest">
+                Verify Credentials
             </button>
-        </form>
+        </div>
     </div>
 
-    <div id="dashboardSection" class="w-full max-w-7xl mx-auto space-y-6 hidden">
+
+    <div id="dashboardSection" class="max-w-7xl mx-auto space-y-6 hidden">
         
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center bg-slate-900 p-6 rounded-2xl border border-slate-800 gap-4 print-hidden">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center bg-slate-900 p-6 rounded-2xl border border-slate-800 gap-4">
             <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 bg-emerald-400/10 px-2.5 py-1 rounded-md">Multi-Profile Ledger Mode</span>
-                <h1 class="text-2xl font-bold text-slate-100 mt-2">Finishing Report Dashboard</h1>
-                <p class="text-slate-400 text-sm mt-0.5">Filter data by employee profiles with separate automated summaries</p>
+                <span id="roleBadge" class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-md"></span>
+                <h1 id="mainTitleHeader" class="text-2xl font-black text-slate-100 mt-2 tracking-tight">FINISHING REPORT SYSTEM</h1>
+                <p class="text-slate-400 text-xs mt-0.5 font-medium uppercase tracking-wider">Cloud Synchronized Database Network</p>
             </div>
             
             <div class="flex items-center gap-3 w-full md:w-auto">
-                <button onclick="window.print()" class="w-full md:w-auto flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 px-6 rounded-xl transition-all shadow-lg cursor-pointer text-sm">
-                    🖨️ Print / Download Profile PDF
+                <button onclick="downloadReportExcelSheetNow()" class="w-full md:w-auto flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-lg cursor-pointer text-sm uppercase tracking-wider">
+                    📊 Export Excel Sheet
                 </button>
-                <button onclick="logout()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2.5 rounded-xl text-sm border border-slate-700 cursor-pointer print-hidden">
-                    Logout
+                <button onclick="terminateSessionRoute()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2.5 rounded-xl text-xs font-semibold border border-slate-700 cursor-pointer uppercase tracking-wider">
+                    Secure Logout
                 </button>
             </div>
         </div>
 
-        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 print-hidden">
-            <h2 class="text-md font-semibold text-slate-200 mb-4 flex items-center gap-2">
-                <span class="h-2 w-2 rounded-full bg-emerald-500"></span> New Finishing Entry
+        <div id="entryFormBlock" class="bg-slate-900 p-6 rounded-2xl border border-slate-800">
+            <h2 class="text-md font-bold text-slate-200 mb-4 flex items-center gap-2 uppercase tracking-wide">
+                <span class="h-2 w-2 rounded-full bg-blue-500 animate-pulse"></span> Production Pipeline Terminal
             </h2>
             <form id="ledgerForm" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 items-end">
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">Track No</label>
-                    <input type="text" id="trackNo" value="8" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono text-sm focus:outline-none">
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Track No</label>
+                    <input type="text" id="trackNo" value="8" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono text-sm focus:outline-none focus:border-blue-500">
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">F-Name (Aadmi Ka Naam)</label>
-                    <input type="text" id="fName" value="Romil" placeholder="e.g. Romil" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Worker Name (F-Name)</label>
+                    <input type="text" id="fName" value="Tushar" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500 font-semibold text-amber-400">
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">Size A</label>
-                    <input type="number" id="sizeA" value="80" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Size A</label>
+                    <input type="number" id="sizeA" value="80" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">Size B</label>
-                    <input type="number" id="sizeB" value="105" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Size B</label>
+                    <input type="number" id="sizeB" value="105" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">GSM</label>
-                    <input type="number" id="gsm" value="300" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">GSM</label>
+                    <input type="number" id="gsm" value="300" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">Total Reams</label>
-                    <input type="number" id="reamsQty" value="100" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Total Reams</label>
+                    <input type="number" id="reamsQty" value="100" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                 </div>
                 <div>
-                    <label class="block text-xs text-amber-400 mb-1">Factor / Code</label>
-                    <input type="number" id="ratePerKg" value="135" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
+                    <label class="block text-xs font-semibold text-amber-400 mb-1">Factor / Code</label>
+                    <input type="number" id="ratePerKg" value="135" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                 </div>
                 <div>
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg text-sm cursor-pointer shadow-md">
-                        Add Row
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg text-sm cursor-pointer shadow-md transition-colors uppercase">
+                        Push Log
                     </button>
                 </div>
             </form>
         </div>
 
-        <div class="print-hidden space-y-2">
-            <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold block">Select Aadmi Profile:</span>
-            <div id="profileTabsContainer" class="flex flex-wrap gap-2">
-                <button onclick="switchProfile('ALL')" id="tab-ALL" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-semibold border border-blue-500 shadow cursor-pointer transition-all">
-                    🌍 All Combined Data
-                </button>
-                <button onclick="switchProfile('Romil')" id="tab-Romil" class="bg-slate-900 text-slate-300 hover:bg-slate-800 px-4 py-2 rounded-xl text-xs border border-slate-800 cursor-pointer transition-all">
-                    👤 Romil
-                </button>
+        <div class="space-y-2 bg-slate-900 p-4 rounded-2xl border border-slate-800">
+            <div class="flex justify-between items-center mb-1">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block" id="filterLabelText">Dynamic Profile Scope Filters:</span>
+                <button onclick="truncateFullDatabaseSheet()" id="adminClearBtn" class="text-xs bg-red-600/10 text-red-400 border border-red-500/20 px-3 py-1 rounded-lg hover:bg-red-600/30 transition-all cursor-pointer font-bold hidden">⚠️ RESET CLOUD BOARD</button>
             </div>
+            <div id="profileTabsContainer" class="flex flex-wrap gap-2">
+                </div>
         </div>
 
-        <div id="printableCanvas" class="bg-slate-900 rounded-2xl border border-slate-800 p-6 md:p-8 bg-white md:bg-slate-900 text-black md:text-slate-100">
+        <div id="printableCanvas" class="bg-slate-900 rounded-2xl border border-slate-800 p-6 md:p-8 text-slate-100 shadow-xl">
             
-            <div class="border-b-2 border-slate-800 pb-4 mb-6 text-black md:text-slate-100">
+            <div class="border-b border-slate-800 pb-4 mb-6">
                 <table style="width: 100%;">
                     <tr>
                         <td>
-                            <h2 style="font-size: 22pt; font-weight: bold; margin: 0; color: #0284c7; tracking-tight">FINISHING REPORT</h2>
-                            <p style="font-size: 9pt; color: #64748b; margin: 2px 0 0 0;">Active Profile View: <span id="currentProfileTitle" class="font-bold text-amber-500 uppercase">All Combined Data</span></p>
+                            <h2 style="font-size: 20pt; font-weight: 900; margin: 0; color: #3b82f6; tracking-tight">MASTER DISPATCH LOG</h2>
+                            <p style="font-size: 9pt; color: #64748b; margin: 2px 0 0 0; text-transform: uppercase; font-weight: 600;">Scope Matrix: <span id="currentProfileTitle" class="font-bold text-amber-500">Master View</span></p>
                         </td>
                         <td style="text-align: right; font-size: 9pt; line-height: 1.4; color: #64748b;">
-                            <strong>Report Date:</strong> <span id="liveDateBox" class="font-mono text-slate-900 md:text-slate-300"></span><br>
-                            <strong>Status:</strong> Verified Output Audit
+                            <strong>Server Sync Date:</strong> <span id="liveDateBox" class="font-mono text-slate-300"></span><br>
+                            <strong>Network State:</strong> <span class="text-emerald-500 font-bold animate-pulse">● LIVE CONNECTED</span>
                         </td>
                     </tr>
                 </table>
@@ -134,40 +121,27 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-800 border-b border-slate-700 text-xs text-slate-400 uppercase font-semibold">
-                            <th class="py-3 px-4">Track No</th>
-                            <th class="py-3 px-4">F-Name</th>
-                            <th class="py-3 px-4">Dimensions</th>
-                            <th class="py-3 px-4 text-center">GSM</th>
-                            <th class="py-3 px-4 text-right">1 Ream Wt</th>
-                            <th class="py-3 px-4 text-center">Reams</th>
-                            <th class="py-3 px-4 text-right">Grand Wt</th>
-                            <th class="py-3 px-4 text-right">Net Amount</th>
-                            <th class="py-3 px-4 text-center print-hidden">Manage</th>
+                        <tr class="bg-slate-950 border-b border-slate-800 text-xs text-slate-400 uppercase font-bold tracking-wider">
+                            <th class="py-3.5 px-4">Track No</th>
+                            <th class="py-3.5 px-4">Worker Name</th>
+                            <th class="py-3.5 px-4">Dimensions</th>
+                            <th class="py-3.5 px-4 text-center">GSM</th>
+                            <th class="py-3.5 px-4 text-right">1 Ream Wt</th>
+                            <th class="py-3.5 px-4 text-center">Total Reams</th>
+                            <th class="py-3.5 px-4 text-right">Grand Wt</th>
+                            <th class="py-3.5 px-4 text-right">Net Amount</th>
+                            <th class="py-3.5 px-4 text-center action-header">Management</th>
                         </tr>
                     </thead>
                     <tbody id="ledgerBody" class="divide-y divide-slate-800/40 text-sm font-mono text-slate-300">
-                        <tr class="ledger-row" data-fname="Romil">
-                            <td class="py-3 px-4 font-bold text-blue-400">Track - 8</td>
-                            <td class="py-3 px-4 fname-cell text-slate-900 md:text-slate-300">Romil</td>
-                            <td class="py-3 px-4 text-slate-900 md:text-slate-300">80 × 105</td>
-                            <td class="py-3 px-4 text-center text-slate-900 md:text-slate-300">300</td>
-                            <td class="py-3 px-4 text-right font-bold text-amber-500">25.200gm</td>
-                            <td class="py-3 px-4 text-center qty-val text-slate-900 md:text-slate-300">100</td>
-                            <td class="py-3 px-4 text-right wt-val text-slate-900 md:text-slate-300">2520.00 kg</td>
-                            <td class="py-3 px-4 text-right font-bold text-emerald-500 amt-val">₹ 340.00</td>
-                            <td class="py-3 px-4 text-center print-hidden">
-                                <button onclick="removeRow(this)" class="text-red-400 bg-red-500/10 px-2 py-0.5 rounded cursor-pointer text-xs">🗑️</button>
-                            </td>
-                        </tr>
-                    </tbody>
+                        </tbody>
                     <tfoot>
-                        <tr class="bg-slate-800/30 border-t-2 border-slate-700 font-bold text-slate-100">
-                            <td class="py-4 px-4 uppercase text-xs text-slate-400" colspan="5">Total Finishing Summary</td>
-                            <td class="py-4 px-4 text-center text-blue-400" id="grandTotalQty">100</td>
-                            <td class="py-4 px-4 text-right text-slate-300" id="grandTotalWt">2520.00 kg</td>
-                            <td class="py-4 px-4 text-right text-emerald-400" id="grandTotalAmt">₹ 340.00</td>
-                            <td class="py-4 px-4 print-hidden"></td>
+                        <tr class="bg-slate-950 border-t-2 border-slate-800 font-extrabold text-slate-100">
+                            <td class="py-4 px-4 uppercase text-xs tracking-wider text-slate-400" colspan="5">CONSOLIDATED AGGREGATE TOTALS</td>
+                            <td class="py-4 px-4 text-center text-blue-400 text-base" id="grandTotalQty">0</td>
+                            <td class="py-4 px-4 text-right text-amber-500 text-base" id="grandTotalWt">0.00 kg</td>
+                            <td class="py-4 px-4 text-right text-emerald-400 text-base" id="grandTotalAmt">₹ 0.00</td>
+                            <td class="py-4 px-4 action-header"></td>
                         </tr>
                     </tfoot>
                 </table>
@@ -176,114 +150,209 @@
     </div>
 
     <script>
-        const loginForm = document.getElementById('loginForm');
-        const loginSection = document.getElementById('loginSection');
-        const dashboardSection = document.getElementById('dashboardSection');
-        const bodyTag = document.body;
+        // ==========================================
+        // ✅ YOUR REAL CLOUD FIREBASE CONFIGURATION LOADED
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyC7yS1jLg_-pfcumFj0ggpmeeCVxw5Nbi4",
+            authDomain: "finishing-ledger.firebaseapp.com",
+            projectId: "finishing-ledger",
+            storageBucket: "finishing-ledger.firebasestorage.app",
+            messagingSenderId: "889757462193",
+            appId: "1:889757462193:web:60ccef39841073ed3f7c90"
+        };
 
-        loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const idInput = document.getElementById('userId').value.trim();
-            const passInput = document.getElementById('userPassword').value.trim();
-
-            if (idInput === "841216" && passInput === "841216") {
-                loginSection.classList.add('hidden');
-                dashboardSection.classList.remove('hidden');
-                bodyTag.classList.remove('items-center', 'justify-center');
-                bodyTag.classList.add('block');
-                
-                rebuildProfileTabs();
-                runDynamicCalculations();
-            } else {
-                alert("❌ Wrong ID or Password! Please try again.");
-                loginForm.reset();
-            }
-        });
-
-        function logout() {
-            loginSection.classList.remove('hidden');
-            dashboardSection.classList.add('hidden');
-            bodyTag.classList.add('items-center', 'justify-center');
-            bodyTag.classList.remove('block');
-            loginForm.reset();
+        // Initialize Firebase with Compat API Strategy
+        let db;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+        } catch(e) {
+            console.error("Firebase init bypass error: ", e);
         }
 
-        // LEDGER OPERATIONS
-        const ledgerForm = document.getElementById('ledgerForm');
+        const loginSection = document.getElementById('loginSection');
+        const dashboardSection = document.getElementById('dashboardSection');
+        const entryFormBlock = document.getElementById('entryFormBlock');
+        const roleBadge = document.getElementById('roleBadge');
+        const mainTitleHeader = document.getElementById('mainTitleHeader');
         const ledgerBody = document.getElementById('ledgerBody');
+        const adminClearBtn = document.getElementById('adminClearBtn');
+
+        let currentRoleMode = "OPERATOR"; 
         let selectedProfile = "ALL";
-        
+        let liveCloudArray = []; 
+
         const today = new Date();
         const strDate = String(today.getDate()).padStart(2, '0') + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + today.getFullYear();
         document.getElementById('liveDateBox').textContent = strDate;
 
-        function rebuildProfileTabs() {
-            const rows = ledgerBody.getElementsByClassName('ledger-row');
-            let namesSet = new Set(["Romil"]);
-            
-            for(let row of rows) {
-                const name = row.getAttribute('data-fname');
-                if(name) namesSet.add(name);
+        function authenticateSessionRoute() {
+            const code = document.getElementById('secretCodeInput').value.trim();
+
+            if (code === "955221") {
+                currentRoleMode = "ADMIN";
+                triggerDashboardWorkspace();
+            } else if (code === "841216") {
+                currentRoleMode = "OPERATOR";
+                triggerDashboardWorkspace();
+            } else {
+                alert("❌ Verification Failed! Invalid Key Card.");
             }
+        }
+
+        function triggerDashboardWorkspace() {
+            loginSection.classList.add('hidden');
+            dashboardSection.classList.remove('hidden');
+
+            if (currentRoleMode === "ADMIN") {
+                entryFormBlock.classList.add('hidden');
+                adminClearBtn.classList.remove('hidden');
+                roleBadge.className = "text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-md";
+                roleBadge.textContent = "Executive System Admin Layer (955221)";
+                mainTitleHeader.textContent = "FINISHING REPORT (MASTER ADMIN PANEL)";
+                document.getElementById('filterLabelText').textContent = "View Live Cloud Data Sheets By Worker Name:";
+            } else {
+                entryFormBlock.classList.remove('hidden');
+                adminClearBtn.classList.add('hidden');
+                roleBadge.className = "text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-400/10 px-2.5 py-1 rounded-md";
+                roleBadge.textContent = "Operator Production Entry Node Terminal (841216)";
+                mainTitleHeader.textContent = "PRODUCTION REPORT WORKSPACE";
+                document.getElementById('filterLabelText').textContent = "Filter Current Session Working Logs:";
+            }
+
+            selectedProfile = "ALL";
+            initializeCloudLiveStream();
+        }
+
+        function terminateSessionRoute() {
+            loginSection.classList.remove('hidden');
+            dashboardSection.classList.add('hidden');
+            document.getElementById('secretCodeInput').value = "";
+        }
+
+        // REAL-TIME FIRESTORE CONTINUOUS STREAM CHANNELS
+        function initializeCloudLiveStream() {
+            if (!db) {
+                alert("Database critical error! Try checking configurations rules.");
+                return;
+            }
+
+            db.collection("finishing_dispatch_ledger")
+              .orderBy("timestamp", "desc")
+              .onSnapshot((snapshot) => {
+                  liveCloudArray = [];
+                  snapshot.forEach((doc) => {
+                      let data = doc.data();
+                      data.id = doc.id; 
+                      liveCloudArray.push(data);
+                  });
+                  compileRenderMatrixView();
+              }, (error) => {
+                  console.error("Database streaming bottleneck: ", error);
+              });
+        }
+
+        function compileRenderMatrixView() {
+            ledgerBody.innerHTML = "";
+            
+            liveCloudArray.forEach((row) => {
+                if (selectedProfile !== "ALL" && row.fNm !== selectedProfile) return;
+
+                const tr = document.createElement('tr');
+                tr.className = "ledger-row hover:bg-slate-950/40 transition-colors";
+                tr.innerHTML = `
+                    <td class="py-3.5 px-4 font-bold text-blue-400">Track - ${row.trk}</td>
+                    <td class="py-3.5 px-4 font-semibold text-slate-200 uppercase">${row.fNm}</td>
+                    <td class="py-3.5 px-4 text-slate-400">${row.sA} × ${row.sB}</td>
+                    <td class="py-3.5 px-4 text-center text-slate-400">${row.gsm}</td>
+                    <td class="py-3.5 px-4 text-right font-bold text-amber-500/90">${row.displayReamWt}</td>
+                    <td class="py-3.5 px-4 text-center qty-val font-semibold text-slate-300">${row.qty}</td>
+                    <td class="py-3.5 px-4 text-right wt-val font-bold text-slate-200">${parseFloat(row.calculatedGrandWt).toFixed(2)} kg</td>
+                    <td class="py-3.5 px-4 text-right font-bold text-emerald-400 amt-val">₹ ${parseFloat(row.targetAmount).toFixed(2)}</td>
+                    <td class="py-3.5 px-4 text-center action-cell">
+                        <button onclick="purgeCloudDocumentRow('${row.id}')" class="text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 px-2.5 py-1 rounded-lg cursor-pointer text-xs transition-all font-bold">🗑️ Delete</button>
+                    </td>
+                `;
+                ledgerBody.appendChild(tr);
+            });
+
+            const actionHeaders = document.querySelectorAll('.action-header');
+            const actionCells = document.querySelectorAll('.action-cell');
+            
+            actionHeaders.forEach(el => el.style.display = currentRoleMode === "ADMIN" ? "none" : "table-cell");
+            actionCells.forEach(el => el.style.display = currentRoleMode === "ADMIN" ? "none" : "table-cell");
+
+            compileProfileTabsFilters();
+            executeTotalsCalculations();
+        }
+
+        function compileProfileTabsFilters() {
+            let namesSet = new Set();
+            liveCloudArray.forEach(row => namesSet.add(row.fNm));
 
             const container = document.getElementById('profileTabsContainer');
             container.innerHTML = `
-                <button onclick="switchProfile('ALL')" class="${selectedProfile === 'ALL' ? 'bg-blue-600 text-white border-blue-500 font-bold' : 'bg-slate-900 text-slate-300 border-slate-800'} px-4 py-2 rounded-xl text-xs font-semibold border cursor-pointer transition-all">
-                    🌍 All Combined Data
+                <button onclick="toggleFilterScopeTab('ALL')" class="${selectedProfile === 'ALL' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold shadow' : 'bg-slate-950 text-slate-400 border border-slate-800'} px-4 py-2 rounded-xl text-xs cursor-pointer transition-all uppercase tracking-wider">
+                    🌍 Full Month Combined Master Logs
                 </button>
             `;
 
             namesSet.forEach(name => {
                 const isActive = (selectedProfile === name);
+                const count = liveCloudArray.filter(r => r.fNm === name).length;
                 container.innerHTML += `
-                    <button onclick="switchProfile('${name}')" class="${isActive ? 'bg-amber-500 text-slate-950 border-amber-500 font-bold' : 'bg-slate-900 text-slate-300 border-slate-800'} px-4 py-2 rounded-xl text-xs border cursor-pointer transition-all uppercase">
-                        👤 ${name}
+                    <button onclick="toggleFilterScopeTab('${name}')" class="${isActive ? 'bg-amber-500 text-slate-950 font-black' : 'bg-slate-950 text-slate-300 border border-slate-800'} px-4 py-2 rounded-xl text-xs cursor-pointer transition-all uppercase tracking-wide">
+                        👤 ${name} (${count} Entries)
                     </button>
                 `;
             });
         }
 
-        function switchProfile(profileName) {
+        function toggleFilterScopeTab(profileName) {
             selectedProfile = profileName;
-            document.getElementById('currentProfileTitle').textContent = profileName === "ALL" ? "All Combined Data" : profileName;
-            
-            const rows = ledgerBody.getElementsByClassName('ledger-row');
-            for(let row of rows) {
-                const rowName = row.getAttribute('data-fname');
-                if(profileName === "ALL" || rowName === profileName) {
-                    row.classList.remove('hidden');
-                } else {
-                    row.classList.add('hidden');
-                }
-            }
-            rebuildProfileTabs();
-            runDynamicCalculations();
+            document.getElementById('currentProfileTitle').textContent = profileName === "ALL" ? "Master Full Cloud Database" : `${profileName} Logs List`;
+            compileRenderMatrixView();
         }
 
-        function runDynamicCalculations() {
+        function executeTotalsCalculations() {
             let totalQty = 0, totalWt = 0, totalAmt = 0;
-            const rows = ledgerBody.getElementsByClassName('ledger-row');
-
-            for(let row of rows) {
-                if(row.classList.contains('hidden')) continue;
-                totalQty += parseFloat(row.querySelector('.qty-val').textContent) || 0;
-                totalWt += parseFloat(row.querySelector('.wt-val').textContent) || 0;
-                let rawAmtText = row.querySelector('.amt-val').textContent.replace('₹', '').trim();
-                totalAmt += parseFloat(rawAmtText) || 0;
-            }
+            
+            liveCloudArray.forEach(row => {
+                if (selectedProfile !== "ALL" && row.fNm !== selectedProfile) return;
+                totalQty += parseFloat(row.qty) || 0;
+                totalWt += parseFloat(row.calculatedGrandWt) || 0;
+                totalAmt += parseFloat(row.targetAmount) || 0;
+            });
 
             document.getElementById('grandTotalQty').textContent = totalQty;
             document.getElementById('grandTotalWt').textContent = totalWt.toFixed(2) + " kg";
             document.getElementById('grandTotalAmt').textContent = "₹ " + totalAmt.toFixed(2);
         }
 
-        function removeRow(buttonElement) {
-            buttonElement.closest('tr').remove();
-            rebuildProfileTabs();
-            runDynamicCalculations();
+        function purgeCloudDocumentRow(docId) {
+            if(confirm("Are you sure you want to permanently erase this document record row from the Cloud server database?")) {
+                db.collection("finishing_dispatch_ledger").doc(docId).delete()
+                  .then(() => { console.log("Cloud document erased successfully."); })
+                  .catch((error) => { alert("Database rejection exception: " + error); });
+            }
         }
 
-        ledgerForm.addEventListener('submit', function(e) {
+        function truncateFullDatabaseSheet() {
+            if(confirm("🚨 CRITICAL HAZARD WARNING:\nAre you absolutely sure you want to completely drop and clear all entries from the Firestore cloud ledger?\nThis will erase Tushar's and all other workers' monthly data!")) {
+                db.collection("finishing_dispatch_ledger").get().then((snapshot) => {
+                    let batch = db.batch();
+                    snapshot.forEach((doc) => {
+                        batch.delete(doc.ref);
+                    });
+                    return batch.commit();
+                }).then(() => {
+                    alert("Cloud ledger database dropped empty successfully.");
+                }).catch(err => alert("Operation error: " + err));
+            }
+        }
+
+        document.getElementById('ledgerForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const trk = document.getElementById('trackNo').value;
@@ -309,33 +378,91 @@
             if (targetAmount > 1000) targetAmount = 1000;
             if (targetAmount < 100) targetAmount = 100;
 
-            const newRow = document.createElement('tr');
-            newRow.className = "ledger-row";
-            newRow.setAttribute('data-fname', fNm);
-            newRow.innerHTML = `
-                <td class="py-3 px-4 font-bold text-blue-400">Track - ${trk}</td>
-                <td class="py-3 px-4 fname-cell text-slate-900 md:text-slate-300">${fNm}</td>
-                <td class="py-3 px-4 text-slate-900 md:text-slate-300">${sA} × ${sB}</td>
-                <td class="py-3 px-4 text-center text-slate-900 md:text-slate-300">${gsm}</td>
-                <td class="py-3 px-4 text-right font-bold text-amber-500">${displayReamWt}</td>
-                <td class="py-3 px-4 text-center qty-val text-slate-900 md:text-slate-300">${qty}</td>
-                <td class="py-3 px-4 text-right wt-val text-slate-900 md:text-slate-300">${calculatedGrandWt.toFixed(2)} kg</td>
-                <td class="py-3 px-4 text-right font-bold text-emerald-500 amt-val">₹ ${targetAmount.toFixed(2)}</td>
-                <td class="py-3 px-4 text-center print-hidden">
-                    <button onclick="removeRow(this)" class="text-red-400 bg-red-500/10 px-2 py-0.5 rounded cursor-pointer text-xs">🗑️</button>
-                </td>
+            const payloadObject = {
+                trk, fNm, sA, sB, gsm, qty, factor, displayReamWt, calculatedGrandWt, targetAmount,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            db.collection("finishing_dispatch_ledger").add(payloadObject)
+              .then(() => {
+                  document.getElementById('trackNo').value = parseInt(trk) + 1;
+                  document.getElementById('sizeA').value = "80";
+                  document.getElementById('sizeB').value = "105";
+                  document.getElementById('gsm').value = "300";
+                  document.getElementById('reamsQty').value = "100";
+              })
+              .catch((err) => {
+                  alert("Cloud storage pipe failure: " + err);
+              });
+        });
+
+        function downloadReportExcelSheetNow() {
+            let nameScope = selectedProfile === "ALL" ? "Full_Month_Master" : selectedProfile + "_Logs";
+            let filename = `Finishing_Report_System_${nameScope}.xls`;
+
+            let excelTemplate = `
+            <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+            <head>
+                <style>
+                    table { border-collapse: collapse; }
+                    th { background-color: #0f172a; color: #ffffff; font-weight: bold; border: 1px solid #cbd5e1; text-align: left; padding: 10px; }
+                    td { border: 1px solid #cbd5e1; padding: 10px; font-family: Arial, sans-serif; }
+                    .title-head { font-size: 16pt; font-weight: bold; color: #2563eb; }
+                </style>
+            </head>
+            <body>
+                <table>
+                    <tr><td class="title-head" colspan="4">FINISHING CLOUD LEDGER REPORT</td><td colspan="4" style="text-align:right;">Sync Export: ${strDate}</td></tr>
+                    <tr><td colspan="8">Filtered Horizon Context: ${selectedProfile}</td></tr>
+                    <tr><td></td></tr>
+                    <tr>
+                        <th>Track Line ID</th>
+                        <th>Personnel Worker</th>
+                        <th>Material Framework Size</th>
+                        <th>GSM Index</th>
+                        <th>1 Ream Weight Units</th>
+                        <th>Total Reams Count</th>
+                        <th>Total Grand Weight (kg)</th>
+                        <th>Net Calculated Billing Amount (INR)</th>
+                    </tr>
             `;
 
-            ledgerBody.insertBefore(newRow, ledgerBody.firstChild);
-            rebuildProfileTabs();
-            switchProfile(fNm);
-            
-            document.getElementById('trackNo').value = parseInt(trk) + 1;
-            document.getElementById('sizeA').value = "80";
-            document.getElementById('sizeB').value = "105";
-            document.getElementById('gsm').value = "300";
-            document.getElementById('reamsQty').value = "100";
-        });
+            liveCloudArray.forEach(row => {
+                if (selectedProfile !== "ALL" && row.fNm !== selectedProfile) return;
+                excelTemplate += `
+                    <tr>
+                        <td>Track - ${row.trk}</td>
+                        <td style="text-transform:uppercase;">${row.fNm}</td>
+                        <td>${row.sA} x ${row.sB}</td>
+                        <td>${row.gsm}</td>
+                        <td>${row.displayReamWt}</td>
+                        <td>${row.qty}</td>
+                        <td>${parseFloat(row.calculatedGrandWt).toFixed(2)}</td>
+                        <td>${parseFloat(row.targetAmount).toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+
+            excelTemplate += `
+                    <tr><td></td></tr>
+                    <tr style="font-weight:bold; background-color:#f8fafc;">
+                        <td colspan="5">CONSOLIDATED SUM AGGREGATES OUTCOME:</td>
+                        <td>${document.getElementById('grandTotalQty').textContent}</td>
+                        <td>${document.getElementById('grandTotalWt').textContent}</td>
+                        <td>${document.getElementById('grandTotalAmt').textContent}</td>
+                    </tr>
+                </table>
+            </body>
+            </html>`;
+
+            let blob = new Blob([excelTemplate], { type: "application/vnd.ms-excel;charset=utf-8" });
+            let downloadAnchor = document.createElement("a");
+            downloadAnchor.href = URL.createObjectURL(blob);
+            downloadAnchor.download = filename;
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            document.body.removeChild(downloadAnchor);
+        }
     </script>
 </body>
 </html>
